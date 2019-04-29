@@ -9,7 +9,11 @@ OUTPUT_DIR=release
 OUTPUT_TEMPLATE="$OUTPUT_DIR/{{.Dir}}_{{.OS}}_{{.Arch}}"
 
 if [ -n $1 ]; then
-	OUTPUT_TEMPLATE="$OUTPUT_DIR/{{.Dir}}_$1_{{.OS}}_{{.Arch}}"
+	OUTPUT_DIR="$1"
+fi
+
+if [ -n $2 ]; then
+	OUTPUT_TEMPLATE="$OUTPUT_DIR/{{.Dir}}_$2_{{.OS}}_{{.Arch}}"
 fi
 
 mkdir $OUTPUT_DIR
