@@ -13,5 +13,5 @@ script:
   - go vet $(go list ./... | grep -v /vendor/)
   - go test -v -race ./...
   - go build
-  - sh ./gox-build.sh
+  - sh ./gox-build.sh $TRAVIS_TAG
  
