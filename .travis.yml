@@ -1,10 +1,7 @@
 language: go
 
 go:
- - 1.x
- - 1.11.x
- - 1.12.x
- - master
+ - stable
 
 before_install:
   - go get github.com/mitchellh/gox
@@ -14,5 +11,17 @@ script:
   - go vet $(go list ./... | grep -v /vendor/)
   - go test -v -race ./...
   - go build
-  - if [ "${LATEST}" = "true" ]; then sh ./gox-build.sh; fi
- 
+  - sh ./gox-build.sh release $TRAVIS_TAG
+
+deploy:
+  provider: releases
+  api_key:
+    secure: KvOLNmVazOHAOWoJSlifSh7ER903Zow+4x0mYi0ly62IaTcqupL54Ww191g2uedd2tc2VxZpsbGnMbTm0pInMh+XiN4MeFtKYLtH386AepWCNQWQwwrYjGuFp6gxlNT/2ogFusgXP4bjMdJ40B+UMA2kVq+LvtE3iegpT9WHvGW+USNRm+fsQ54KAOby9nxYxtMRxJ7jB9smlXX7U5ELvbO99BiWZuowJS0qIkmWB8IsUzT7dSGyldGGuNF2xpH58E3n79KotfZKHSaTms8k5CWho7QVtm9vhSgA2SyaLycOyTxQQ+IensF0yHglJEcLcncG+Mof1gAUz0FiJxr3x1kDOnrLoH2N+EczzfY3PjvyzTItUbFWQESGM9+k2mlzVsIeAVpXHTqL1LGW15qjFxRkqyVp1KIUpDYFK521acosEqh94zJVi/FX4Z+jbw91eArVfBHAspjxNiidTH2eUtU15+XSIMNb3/UcQ8utId63E+P1zAdALa7ULwvIGTU+MP6eCEEXrLveZaIN5ku6y9vcoEx/NNv+iAG+1896TdlgXliUlEevAJfcEoHO0Agv+BTIMz9FIyC9vkSjJy4LJZmsKIwE91HTLlQXOUqAE9sBByZrvlzyOtshr4dyyehel/U0z7HrUNDyw0yhF41X8LDqeSvT9KFEVInx6TeMivw=
+  file_glob: true
+  file: "release/*.bz2"
+  skip_cleanup: true
+  draft: true
+  on:
+    branch: master
+    repo: fgma/rester
+    tags: true
