@@ -14,7 +14,7 @@ fi
 
 mkdir $OUTPUT_DIR
 gox -ldflags "-s -w -X github.com/fgma/rester/cmd.versionRevision=`git rev-parse --short HEAD`" \
-  -output ${OUTPUT_TEMPLATE}
+  -output ${OUTPUT_TEMPLATE} \
   -rebuild
 
 rm -f ${OUTPUT_DIR}/rester_*_*.bz2
