@@ -1,0 +1,75 @@
+{
+    "repositories": [
+        {
+            "name": "repo1",
+            "url": "/tmp/rester_test/repo1",
+            "password": "repo1"
+        },
+        {
+            "name": "repo2",
+            "url": "/tmp/rester_test/repo2",
+            "password": "repo2"
+        },
+        {
+            "name": "repo3",
+            "url": "s3:http://omv:9001/minio-test",
+            "password": "repo3",
+            "environment": {
+                "AWS_ACCESS_KEY_ID": "minio-test",
+                "AWS_SECRET_ACCESS_KEY": "minio-test"
+            }
+        }
+    ],
+    "backups": [
+        {
+            "name": "some data",
+            "repository": "repo2",
+            "data": [
+                "/boot/"
+            ],
+            "exclude": [ "/etc/shadow", "/etc/passwd", "*.mod", "*.mo", "*cron*" ],
+            "one_file_system": true,            
+            "tags": [ "config", "etc" ],
+            "run_before": "notify-send -t 100 Backup before",
+            "run_after": "notify-send -t 100 Backup after",
+            "run_on_success": "notify-send -t 5000 SUCCESS \"data has been backed up\"",
+            "run_on_failure": "notify-send -t 5000 FAILED \"data has NOT been backed up\""
+        },
+        {
+            "name": "backup2",
+            "repository": "repo2",
+            "data": [
+                "/etc/"
+            ],
+            "one_file_system": true,            
+            "tags": [ "config", "etc" ],
+            "run_before": "notify-send -t 100 Backup before",
+            "run_after": "notify-send -t 100 Backup after",
+            "run_on_success": "notify-send -t 5000 SUCCESS \"backup2 has been backed up\"",
+            "run_on_failure": "notify-send -t 5000 FAILED \"data has NOT been backed up\""
+        },
+        {
+            "name": "backup3",
+            "repository": "repo2",
+            "data_stdin_command": "date",
+            "tags": [ "stdin" ],
+            "run_before": "notify-send -t 100 Backup before",
+            "run_after": "notify-send -t 100 Backup after",
+            "run_on_success": "notify-send -t 5000 SUCCESS \"backup3 has been backed up\"",
+            "run_on_failure": "notify-send -t 5000 FAILED \"data has NOT been backed up\""
+        },
+        {
+            "name": "minio-test",
+            "repository": "repo3",
+            "data": [
+                "/etc/"
+            ],
+            "one_file_system": true,
+            "tags": [ "config", "etc" ],
+            "run_before": "notify-send -t 5000 SUCCESS \"Minio backup before\"",
+            "run_after": "notify-send -t 5000 SUCCESS \"Minio backup after\"",
+            "run_on_success": "notify-send -t 5000 SUCCESS \"minio-test has been backed up\"",
+            "run_on_failure": "notify-send -t 5000 FAILED \"minio-test  has NOT been backed up\""
+        }
+    ]
+}

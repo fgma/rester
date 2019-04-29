@@ -1,0 +1,14 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: rester
+Source: https://localhost/rester
+
+Files:     *
+Copyright: 2018 root <root@localhost>
+License:   Unknown
+
+Files:     debian/*
+Copyright: 2018 root <root@localhost>
+License:   Unknown
+
+License: rester
+ Unknown license.

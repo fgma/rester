@@ -1,0 +1,6 @@
+#!/usr/bin/make -f
+export DH_GOPKG := github.com/fgma/rester
+
+%:
+	dh $@ -Sgolang --with=golang
+

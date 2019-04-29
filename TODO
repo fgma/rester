@@ -1,0 +1,4 @@
+- allow one backup to multiple repositories
+    - make consistent concerning commands like age, backup, check
+- add verbose flag to see what's going on
+- implement template based backups

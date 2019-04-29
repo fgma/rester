@@ -1,0 +1,17 @@
+Source: rester
+Section: utils
+Homepage: https://localhost/rester
+Priority: optional
+Standards-Version: 4.2.1
+Maintainer: root <root@localhost>
+Build-Depends: debhelper (>= 11~),
+               dh-golang,
+               dh-exec,
+               golang-go (>= 1.10)
+
+Package: rester
+Architecture: any
+Built-Using: ${misc:Built-Using}
+Depends: ${misc:Depends},
+Description: Wrapper around restic backup utility
+ Wrapper around restic backup utility.
