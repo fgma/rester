@@ -22,5 +22,6 @@ deploy:
   skip_cleanup: true
   draft: true
   on:
-    branch: travis
+    branch: master
     repo: fgma/rester
+    tags: true
