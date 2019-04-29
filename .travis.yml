@@ -10,6 +10,8 @@ before_install:
   - go get github.com/mitchellh/gox
   
 script:
+  - GOFMT_ERRORS=$(gofmt -l . | grep -v '^vendor/')
+  - if [ -n "$GOFMT_ERRORS" ]; then	echo $GOFMT_ERRORS; exit 1; fi
   - if [ -n $(gofmt -l | grep -v /vendor/) ] then gofmt -l | grep -v /vendor/; fi
   - go vet $(go list ./... | grep -v /vendor/)
   - go test -v -race ./...
