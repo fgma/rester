@@ -1,11 +1,9 @@
 language: go
 
 go:
- - 1.x
  - 1.11.x
  - 1.12.x
  - stable
-   env: LATEST=true
 
 before_install:
   - go get github.com/mitchellh/gox
@@ -15,5 +13,5 @@ script:
   - go vet $(go list ./... | grep -v /vendor/)
   - go test -v -race ./...
   - go build
-  - if [ "${LATEST}" = "true" ]; then sh ./gox-build.sh; fi
+  - sh ./gox-build.sh
  
