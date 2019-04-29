@@ -10,7 +10,7 @@ before_install:
   - go get github.com/mitchellh/gox
   
 script:
-  - diff -u <(echo -n) <(gofmt -d .)
+  - if [ -n $(gofmt -l | grep -v /vendor/) ] then gofmt -l | grep -v /vendor/; fi
   - go vet $(go list ./... | grep -v /vendor/)
   - go test -v -race ./...
   - go build
