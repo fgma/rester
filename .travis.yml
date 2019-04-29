@@ -4,7 +4,7 @@ go:
  - 1.x
  - 1.11.x
  - 1.12.x
- - master
+ - stable
 
 before_install:
   - go get github.com/mitchellh/gox
