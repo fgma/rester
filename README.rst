@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/fgma/rester.svg?branch=master
+    :target: https://travis-ci.org/fgma/rester
+
 Introduction
 ------------
 
