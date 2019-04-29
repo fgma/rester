@@ -20,7 +20,7 @@ deploy:
   file_glob: true
   file: "release/*.bz2"
   skip_cleanup: true
-  draft: true
+  draft: false
   on:
     branch: master
     repo: fgma/rester
