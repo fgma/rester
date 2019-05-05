@@ -33,8 +33,8 @@ var exampleConfigCmd = &cobra.Command{
   ],
   "backups": [
     {
-      "name": "some data",
-      "repository": "backup-repo",
+      "name": "some_data",
+      "repositories": [ "backup-repo" ],
       "data": [
         "/home/testuser/pictures",
         "/home/testuser/data"
@@ -51,7 +51,7 @@ var exampleConfigCmd = &cobra.Command{
     },
     {
       "name": "crontab",
-      "repository": "backup-repo",
+      "repositories": [ "backup-repo" ],
       "data_stdin_command": "crontab -l",
       "stdin_filename": "crontab.txt",
       "one_file_system": true,            
@@ -68,8 +68,8 @@ var exampleConfigCmd = &cobra.Command{
 		_, err := internal.LoadFromReader(reader)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to parse example config: %s", err)
+		} else {
+			fmt.Println(exampleConfig)
 		}
-
-		fmt.Println(exampleConfig)
 	},
 }

@@ -512,16 +512,14 @@ func runHandler(command string, handlerName string, environment map[string]strin
 	} else {
 
 		type TemplateArgs struct {
-			BackupName       string
-			BackupRepository string
-			RepositoryName   string
-			RepositoryURL    string
+			BackupName     string
+			RepositoryName string
+			RepositoryURL  string
 		}
 
 		args := TemplateArgs{}
 		if backup != nil {
 			args.BackupName = backup.Name
-			args.BackupRepository = backup.Repository
 		}
 		if repository != nil {
 			args.RepositoryName = repository.Name
@@ -601,20 +599,6 @@ func convertEnvironment(env map[string]string) []string {
 
 	for k, v := range env {
 		result = append(result, fmt.Sprintf("%s=%s", k, v))
-	}
-
-	return result
-}
-
-func combineMaps(a, b map[string]string) map[string]string {
-	result := make(map[string]string)
-
-	for k, v := range a {
-		result[k] = v
-	}
-
-	for k, v := range b {
-		result[k] = v
 	}
 
 	return result

@@ -17,23 +17,11 @@ var backupCmd = &cobra.Command{
 	Long:  `Run backups specified on the commandline or all if no backup is specified`,
 	Args:  cobra.ArbitraryArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		ensureBackupsExist(args)
-
-		if len(args) == 0 {
-			for _, backup := range config.Backups {
-				runBackup(backup.Name)
-			}
-		} else {
-			for _, backupName := range args {
-				runBackup(backupName)
-			}
-		}
-
+		runForBackupConfigurations(args, runBackup)
 	},
 }
 
-func runBackup(backupName string) {
+func runBackup(backupName string, repositoryName string) (int, error) {
 
 	backup := config.GetBackupByName(backupName)
 
@@ -42,31 +30,16 @@ func runBackup(backupName string) {
 		os.Exit(1)
 	}
 
-	repository := config.GetRepositoryByName(backup.Repository)
+	repository := config.GetRepositoryByName(repositoryName)
 
 	if repository == nil {
-		fmt.Fprintf(os.Stderr, "Repository %s is not a configured repository\n", backup.Repository)
+		fmt.Fprintf(os.Stderr, "Repository %s is not a configured repository\n", repositoryName)
 		os.Exit(1)
 	}
 
 	if err := restic.RunBackup(*backup, *repository); err != nil {
 		fmt.Fprintf(os.Stderr, "Backup %s failed to run: %s\n", backupName, err.Error())
 	}
-}
 
-func ensureBackupsExist(backups []string) {
-	for _, backupName := range backups {
-		isExistingBackup := false
-		for _, b := range config.Backups {
-			if b.Name == backupName {
-				isExistingBackup = true
-				break
-			}
-		}
-
-		if !isExistingBackup {
-			fmt.Fprintf(os.Stderr, "%s is not a configured backup\n", backupName)
-			os.Exit(1)
-		}
-	}
+	return 0, nil
 }
