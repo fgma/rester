@@ -512,16 +512,14 @@ func runHandler(command string, handlerName string, environment map[string]strin
 	} else {
 
 		type TemplateArgs struct {
-			BackupName       string
-			BackupRepository string
-			RepositoryName   string
-			RepositoryURL    string
+			BackupName     string
+			RepositoryName string
+			RepositoryURL  string
 		}
 
 		args := TemplateArgs{}
 		if backup != nil {
 			args.BackupName = backup.Name
-			args.BackupRepository = backup.Repository
 		}
 		if repository != nil {
 			args.RepositoryName = repository.Name

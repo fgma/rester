@@ -22,18 +22,29 @@ var backupCmd = &cobra.Command{
 
 		if len(args) == 0 {
 			for _, backup := range config.Backups {
-				runBackup(backup.Name)
+				for _, repo := range backup.Repositories {
+					runBackup(backup.Name, repo)
+				}
 			}
 		} else {
 			for _, backupName := range args {
-				runBackup(backupName)
+				backup := config.GetBackupByName(backupName)
+
+				if backup == nil {
+					fmt.Fprintf(os.Stderr, "Backup %s is not a configured backup\n", backupName)
+					os.Exit(1)
+				}
+
+				for _, repo := range backup.Repositories {
+					runBackup(backupName, repo)
+				}
 			}
 		}
 
 	},
 }
 
-func runBackup(backupName string) {
+func runBackup(backupName string, repositoryName string) {
 
 	backup := config.GetBackupByName(backupName)
 
@@ -42,10 +53,10 @@ func runBackup(backupName string) {
 		os.Exit(1)
 	}
 
-	repository := config.GetRepositoryByName(backup.Repository)
+	repository := config.GetRepositoryByName(repositoryName)
 
 	if repository == nil {
-		fmt.Fprintf(os.Stderr, "Repository %s is not a configured repository\n", backup.Repository)
+		fmt.Fprintf(os.Stderr, "Repository %s is not a configured repository\n", repositoryName)
 		os.Exit(1)
 	}
 

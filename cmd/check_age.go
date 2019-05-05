@@ -25,22 +25,33 @@ var checkAgeCmd = &cobra.Command{
 
 		if len(args) == 0 {
 			for _, backup := range config.Backups {
-				exitCode, err := runCheckAge(backup.Name)
-				if error == nil {
-					error = err
-				}
-				if exitCode > checkExitCode {
-					checkExitCode = exitCode
+				for _, repo := range backup.Repositories {
+					exitCode, err := runCheckAge(backup.Name, repo)
+					if error == nil {
+						error = err
+					}
+					if exitCode > checkExitCode {
+						checkExitCode = exitCode
+					}
 				}
 			}
 		} else {
 			for _, backupName := range args {
-				exitCode, err := runCheckAge(backupName)
-				if error == nil {
-					error = err
+				backup := config.GetBackupByName(backupName)
+
+				if backup == nil {
+					fmt.Fprintf(os.Stderr, "Backup %s is not a configured backup\n", backupName)
+					os.Exit(1)
 				}
-				if exitCode > checkExitCode {
-					checkExitCode = exitCode
+
+				for _, repo := range backup.Repositories {
+					exitCode, err := runCheckAge(backup.Name, repo)
+					if error == nil {
+						error = err
+					}
+					if exitCode > checkExitCode {
+						checkExitCode = exitCode
+					}
 				}
 			}
 		}
@@ -49,7 +60,7 @@ var checkAgeCmd = &cobra.Command{
 	},
 }
 
-func runCheckAge(backupName string) (int, error) {
+func runCheckAge(backupName string, repositoryName string) (int, error) {
 
 	backup := config.GetBackupByName(backupName)
 
@@ -58,10 +69,10 @@ func runCheckAge(backupName string) (int, error) {
 		os.Exit(1)
 	}
 
-	repository := config.GetRepositoryByName(backup.Repository)
+	repository := config.GetRepositoryByName(repositoryName)
 
 	if repository == nil {
-		fmt.Fprintf(os.Stderr, "Repository %s is not a configured repository\n", backup.Repository)
+		fmt.Fprintf(os.Stderr, "Repository %s is not a configured repository\n", repositoryName)
 		os.Exit(1)
 	}
 
@@ -69,13 +80,13 @@ func runCheckAge(backupName string) (int, error) {
 	exitCode := 0
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error checking age for backup %s to repository %s\n", backup.Name, backup.Repository)
+		fmt.Fprintf(os.Stderr, "Error checking age for backup %s to repository %s\n", backup.Name, repository.Name)
 		exitCode = 1
 	} else if limitError {
-		fmt.Fprintf(os.Stderr, "Error limit reached for backup %s to repository %s\n", backup.Name, backup.Repository)
+		fmt.Fprintf(os.Stderr, "Error limit reached for backup %s to repository %s\n", backup.Name, repository.Name)
 		exitCode = 3
 	} else if limitWarn {
-		fmt.Fprintf(os.Stdout, "Warning limit reached for backup %s to repository %s\n", backup.Name, backup.Repository)
+		fmt.Fprintf(os.Stdout, "Warning limit reached for backup %s to repository %s\n", backup.Name, repository.Name)
 		exitCode = 2
 	}
 

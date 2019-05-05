@@ -70,7 +70,7 @@ type backupDefaultable struct {
 
 type Backup struct {
 	Name             string            `json:"name,omitempty"`
-	Repository       string            `json:"repository,omitempty"`
+	Repositories     []string          `json:"repositories,omitempty"`
 	Data             []string          `json:"data,omitempty"`
 	DataStdinCommand string            `json:"data_stdin_command,omitempty"`
 	StdinFilename    string            `json:"stdin_filename,omitempty"`
@@ -283,12 +283,14 @@ func validateBackup(backup *Backup, repoNames map[string]bool) error {
 		return ValidationError{"Backup has no name."}
 	}
 
-	if backup.Repository == "" {
+	if len(backup.Repositories) == 0 {
 		return ValidationError{"Backup has no repository."}
 	}
 
-	if _, ok := repoNames[backup.Repository]; !ok {
-		return ValidationError{fmt.Sprintf("Backup repository %s not defined.", backup.Repository)}
+	for _, repo := range backup.Repositories {
+		if _, ok := repoNames[repo]; !ok {
+			return ValidationError{fmt.Sprintf("Backup repository %s not defined.", repo)}
+		}
 	}
 
 	if len(backup.Data) > 0 && backup.DataStdinCommand != "" {

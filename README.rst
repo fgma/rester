@@ -225,7 +225,6 @@ handler
     If the commands start with a ``~`` sign it is expanded to the user's home directory. Additionally some special variables inside the commands are replaced with the appropriate values to automatically customize commands:
 
         - {{.BackupName}}
-        - {{.BackupRepository}}
         - {{.RepositoryName}}
         - {{.RepositoryURL}}
 
@@ -369,7 +368,7 @@ Example configuration
         "backups": [
             {
                 "name": "/home/user",
-                "repository": "minio-backup",
+                "repositories": [ "minio-backup" ],
                 "data": [
                     "/home/user/"
                 ],
@@ -382,7 +381,7 @@ Example configuration
             },
             {
                 "name": "crontab",
-                "repository": "minio-backup",
+                "repositories": [ "minio-backup" ],
                 "data_stdin_command": "crontab -l",
                 "stdin_filename": "crontab.txt",
                 "one_file_system": true,            

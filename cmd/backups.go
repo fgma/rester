@@ -22,7 +22,7 @@ var backupsCmd = &cobra.Command{
 
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 
-		fmt.Fprintln(w, "name\tdata\trepository")
+		fmt.Fprintln(w, "name\tdata\trepositories")
 		fmt.Fprintln(w, "----\t----\t----------")
 
 		for _, backup := range config.Backups {
@@ -34,7 +34,7 @@ var backupsCmd = &cobra.Command{
 			}
 			fmt.Fprintf(
 				w, "%s\t%s\t%s\n",
-				backup.Name, data, backup.Repository,
+				backup.Name, data, strings.Join(backup.Repositories, ","),
 			)
 		}
 
