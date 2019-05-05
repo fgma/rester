@@ -27,6 +27,7 @@ var ageCmd = &cobra.Command{
 		fmt.Fprintln(w, "----\t----\t----------\t---")
 
 		now := time.Now()
+		exitCode := 0
 
 		for _, backup := range config.Backups {
 			data := ""
@@ -48,7 +49,7 @@ var ageCmd = &cobra.Command{
 
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "Failed to get age for backup %s: %s\n", backup.Name, err)
-					os.Exit(1)
+					exitCode = 1
 				}
 
 				age := "-"
@@ -64,5 +65,6 @@ var ageCmd = &cobra.Command{
 		}
 
 		w.Flush()
+		os.Exit(exitCode)
 	},
 }

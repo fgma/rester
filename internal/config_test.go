@@ -33,7 +33,7 @@ func TestLoadConfig(t *testing.T) {
 		],
 		"backups": [
 			{
-				"name": "some data",
+				"name": "some_data",
 				"repositories": [ "test1" ],
 				"data": [
 					"/etc/",
@@ -59,7 +59,7 @@ func TestLoadConfig(t *testing.T) {
 				"tags": [ "db", "mysql" ]
 			},
 			{
-				"name": "some other data",
+				"name": "some_other_data",
 				"repositories": [ "test2", "test1" ],
 				"data": [ "/etc/" ],
 				"exclude": [ "*.tmp", "*.bcd" ],
@@ -100,7 +100,7 @@ func TestLoadConfig(t *testing.T) {
 	//
 	// backup 0
 	//
-	assert.Equal(t, "some data", config.Backups[0].Name)
+	assert.Equal(t, "some_data", config.Backups[0].Name)
 	assert.Equal(t, 1, len(config.Backups[0].Repositories))
 	assert.Equal(t, "test1", config.Backups[0].Repositories[0])
 
@@ -149,7 +149,7 @@ func TestLoadConfig(t *testing.T) {
 	//
 	// backup 2
 	//
-	assert.Equal(t, "some other data", config.Backups[2].Name)
+	assert.Equal(t, "some_other_data", config.Backups[2].Name)
 	assert.Equal(t, 2, len(config.Backups[2].Repositories))
 	assert.Equal(t, "test2", config.Backups[2].Repositories[0])
 	assert.Equal(t, "test1", config.Backups[2].Repositories[1])
@@ -268,6 +268,52 @@ func TestLoadConfigInvalidRepostory(t *testing.T) {
 	assert.True(t, strings.Contains(error.Error(), "Backup repository INVALID REPOSITORY not defined."))
 }
 
+func TestLoadConfigInvalidRepositoryName(t *testing.T) {
+	reader := strings.NewReader(`{
+		"repositories": [
+			{
+				"name": "test1/ ",
+				"url": "/home/test/repos/test1",
+				"password": "1"
+			}
+		],
+		"backups": [
+			{
+				"name": "mysql",
+				"repositories": [ "test1" ],
+				"data_stdin_command": "mysqldump"
+			}
+		]
+	}`)
+
+	_, error := LoadFromReader(reader)
+	assert.True(t, error != nil)
+	assert.True(t, strings.Contains(error.Error(), "Repository name contains invalid character."))
+}
+
+func TestLoadConfigInvalidBackupName(t *testing.T) {
+	reader := strings.NewReader(`{
+		"repositories": [
+			{
+				"name": "test1",
+				"url": "/home/test/repos/test1",
+				"password": "1"
+			}
+		],
+		"backups": [
+			{
+				"name": "mysql/ 123",
+				"repositories": [ "test1" ],
+				"data_stdin_command": "mysqldump"
+			}
+		]
+	}`)
+
+	_, error := LoadFromReader(reader)
+	assert.True(t, error != nil)
+	assert.True(t, strings.Contains(error.Error(), "Backup name contains invalid character."))
+}
+
 func TestGetRepositoryByName(t *testing.T) {
 	reader := strings.NewReader(`{
 		"repositories": [
@@ -322,7 +368,7 @@ func TestGetBackupByName(t *testing.T) {
 				"stdin_filename": "mysqldump.sql"
 			},
 			{
-				"name": "some data",
+				"name": "some_data",
 				"repositories": [ "test1" ],
 				"data_stdin_command": "mysqldump",
 				"stdin_filename": "some_data.sql"
@@ -338,9 +384,9 @@ func TestGetBackupByName(t *testing.T) {
 	assert.NotZero(t, mysql)
 	assert.Equal(t, "mysql", mysql.Name)
 
-	someData := config.GetBackupByName("some data")
+	someData := config.GetBackupByName("some_data")
 	assert.NotZero(t, someData)
-	assert.Equal(t, "some data", someData.Name)
+	assert.Equal(t, "some_data", someData.Name)
 
 	assert.Zero(t, config.GetBackupByName("undefined"))
 }

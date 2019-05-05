@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"runtime"
+	"strings"
 
 	jsonutil "github.com/vrischmann/jsonutil"
 )
@@ -262,6 +263,10 @@ func validateRepository(repo *Repository) error {
 		return ValidationError{"Repository has no name."}
 	}
 
+	if strings.ContainsAny(repo.Name, "\\ ") {
+		return ValidationError{"Repository name contains invalid character."}
+	}
+
 	if repo.URL == "" {
 		return ValidationError{"Repository has no URL."}
 	}
@@ -281,6 +286,10 @@ func validateBackup(backup *Backup, repoNames map[string]bool) error {
 
 	if backup.Name == "" {
 		return ValidationError{"Backup has no name."}
+	}
+
+	if strings.ContainsAny(backup.Name, "\\ ") {
+		return ValidationError{"Backup name contains invalid character."}
 	}
 
 	if len(backup.Repositories) == 0 {

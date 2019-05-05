@@ -30,7 +30,7 @@ var shellCmd = &cobra.Command{
 		shell, err := loginshell.Shell()
 
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to get shell loginshell: %s\n", err)
+			fmt.Fprintf(os.Stderr, "Failed to get shell: %s\n", err)
 			os.Exit(1)
 		}
 

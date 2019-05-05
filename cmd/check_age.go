@@ -17,46 +17,7 @@ var checkAgeCmd = &cobra.Command{
 	Long:  `Check age of the given backups`,
 	Args:  cobra.ArbitraryArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		ensureBackupsExist(args)
-
-		var error error = nil
-		var checkExitCode int = 0
-
-		if len(args) == 0 {
-			for _, backup := range config.Backups {
-				for _, repo := range backup.Repositories {
-					exitCode, err := runCheckAge(backup.Name, repo)
-					if error == nil {
-						error = err
-					}
-					if exitCode > checkExitCode {
-						checkExitCode = exitCode
-					}
-				}
-			}
-		} else {
-			for _, backupName := range args {
-				backup := config.GetBackupByName(backupName)
-
-				if backup == nil {
-					fmt.Fprintf(os.Stderr, "Backup %s is not a configured backup\n", backupName)
-					os.Exit(1)
-				}
-
-				for _, repo := range backup.Repositories {
-					exitCode, err := runCheckAge(backup.Name, repo)
-					if error == nil {
-						error = err
-					}
-					if exitCode > checkExitCode {
-						checkExitCode = exitCode
-					}
-				}
-			}
-		}
-
-		os.Exit(checkExitCode)
+		runForBackupConfigurations(args, runCheckAge)
 	},
 }
 

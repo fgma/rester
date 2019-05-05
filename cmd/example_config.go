@@ -33,7 +33,7 @@ var exampleConfigCmd = &cobra.Command{
   ],
   "backups": [
     {
-      "name": "some data",
+      "name": "some_data",
       "repositories": [ "backup-repo" ],
       "data": [
         "/home/testuser/pictures",
@@ -68,8 +68,8 @@ var exampleConfigCmd = &cobra.Command{
 		_, err := internal.LoadFromReader(reader)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to parse example config: %s", err)
+		} else {
+			fmt.Println(exampleConfig)
 		}
-
-		fmt.Println(exampleConfig)
 	},
 }

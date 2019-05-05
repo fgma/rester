@@ -25,3 +25,26 @@ func compareStringList(a, b []string) bool {
 	}
 	return true
 }
+
+func combineMaps(a, b map[string]string) map[string]string {
+	result := make(map[string]string)
+
+	for k, v := range a {
+		result[k] = v
+	}
+
+	for k, v := range b {
+		result[k] = v
+	}
+
+	return result
+}
+
+func Contains(slice []string, element string) bool {
+	for _, x := range slice {
+		if x == element {
+			return true
+		}
+	}
+	return false
+}

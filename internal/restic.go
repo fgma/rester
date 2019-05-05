@@ -603,17 +603,3 @@ func convertEnvironment(env map[string]string) []string {
 
 	return result
 }
-
-func combineMaps(a, b map[string]string) map[string]string {
-	result := make(map[string]string)
-
-	for k, v := range a {
-		result[k] = v
-	}
-
-	for k, v := range b {
-		result[k] = v
-	}
-
-	return result
-}

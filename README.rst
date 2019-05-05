@@ -18,7 +18,7 @@ System requirements
 
 Rester is implemented in golang and should run on all platforms restic supports. It only needs a recent version of restic.
 
-Right now it is only tested running on linux.
+Right now it is only tested running on linux and basic functionality on windows.
 
 Install
 -------
@@ -102,7 +102,7 @@ In addition to restic's forget command this will also run restic's prune command
 
     rester check-age
 
-to check your backups ages. If you need to restore data you can use regular restic commands to do so or just mount a repository:
+to check your backups ages. If everything is ok, restic will just exit with a exit code of 0 and no output. If you need to restore data you can use regular restic commands to do so or just mount a repository:
 
 .. code-block:: shell
 
@@ -150,6 +150,16 @@ An overview of all available commands:
     Use "./rester [command] --help" for more information about a command.
     $
 
+
+The commands ``backup`` and ``check-age`` support an advanced syntax for selecting backups to use:
+
+.. code-block:: shell
+
+    rester backup my-configured-backup/one-of-its-repos another-backup
+
+This will run the backup ``my-configured-backup`` to repository ``one-of-its-repos`` and backup ``another-backup`` to all its configured repositories.
+
+
 .. _configuration:
 
 Configuration
@@ -173,7 +183,7 @@ Repositories
 To actually backup data at least one repository has to be configured. Rester supports all repository formats restic supports.
 
 name
-    A unique name to refer to this repository.
+    A unique name to refer to this repository. Invalid characters: " ", "/".
 
 url
     The URL of the repository as passed to restic. For details on the format have a look at into restic's manual.
@@ -240,7 +250,7 @@ Backups
 =======
 
 name
-    A unique name to refer to this backup.
+    A unique name to refer to this backup. Invalid characters: " ", "/".
 
 repository
     The name of the repository to backup to as specified in the repositories section of the configuration.
@@ -367,7 +377,7 @@ Example configuration
         ],
         "backups": [
             {
-                "name": "/home/user",
+                "name": "home",
                 "repositories": [ "minio-backup" ],
                 "data": [
                     "/home/user/"
