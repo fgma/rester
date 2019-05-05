@@ -18,6 +18,8 @@ var initCmd = &cobra.Command{
 	Args:  cobra.ArbitraryArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		ensureRepositoriesExist(args)
+
 		if len(args) == 0 {
 			for _, repository := range config.Repositories {
 				initRepository(repository.Name)

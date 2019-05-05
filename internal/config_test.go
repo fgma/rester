@@ -33,8 +33,8 @@ func TestLoadConfig(t *testing.T) {
 		],
 		"backups": [
 			{
-				"name": "some data",
-				"repository": "test1",
+				"name": "some_data",
+				"repositories": [ "test1" ],
 				"data": [
 					"/etc/",
 					"/var/lib/",
@@ -53,14 +53,14 @@ func TestLoadConfig(t *testing.T) {
 			},
 			{
 				"name": "mysql",
-				"repository": "test2",
+				"repositories": [ "test2" ],
 				"data_stdin_command": "mysqldump",
 				"stdin_filename": "mysqldump.sql",
 				"tags": [ "db", "mysql" ]
 			},
 			{
-				"name": "some other data",
-				"repository": "test2",
+				"name": "some_other_data",
+				"repositories": [ "test2", "test1" ],
 				"data": [ "/etc/" ],
 				"exclude": [ "*.tmp", "*.bcd" ],
 				"one_file_system": false,            
@@ -100,8 +100,9 @@ func TestLoadConfig(t *testing.T) {
 	//
 	// backup 0
 	//
-	assert.Equal(t, "some data", config.Backups[0].Name)
-	assert.Equal(t, "test1", config.Backups[0].Repository)
+	assert.Equal(t, "some_data", config.Backups[0].Name)
+	assert.Equal(t, 1, len(config.Backups[0].Repositories))
+	assert.Equal(t, "test1", config.Backups[0].Repositories[0])
 
 	assert.Equal(t, 3, len(config.Backups[0].Data))
 	assert.Equal(t, "/etc/", config.Backups[0].Data[0])
@@ -130,7 +131,8 @@ func TestLoadConfig(t *testing.T) {
 	// backup 1
 	//
 	assert.Equal(t, "mysql", config.Backups[1].Name)
-	assert.Equal(t, "test2", config.Backups[1].Repository)
+	assert.Equal(t, 1, len(config.Backups[1].Repositories))
+	assert.Equal(t, "test2", config.Backups[1].Repositories[0])
 	assert.Equal(t, "mysqldump", config.Backups[1].DataStdinCommand)
 	assert.Equal(t, "mysqldump.sql", config.Backups[1].StdinFilename)
 	assert.Equal(t, false, config.Backups[1].OneFileSystem)
@@ -147,8 +149,10 @@ func TestLoadConfig(t *testing.T) {
 	//
 	// backup 2
 	//
-	assert.Equal(t, "some other data", config.Backups[2].Name)
-	assert.Equal(t, "test2", config.Backups[2].Repository)
+	assert.Equal(t, "some_other_data", config.Backups[2].Name)
+	assert.Equal(t, 2, len(config.Backups[2].Repositories))
+	assert.Equal(t, "test2", config.Backups[2].Repositories[0])
+	assert.Equal(t, "test1", config.Backups[2].Repositories[1])
 
 	assert.Equal(t, 1, len(config.Backups[2].Data))
 	assert.Equal(t, "/etc/", config.Backups[2].Data[0])
@@ -181,7 +185,7 @@ func TestLoadConfigDataAndStdinShoulFail(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",
+				"repositories": [ "test1" ],
 				"data": [ "/etc/" ],
 				"data_stdin_command": "mysqldump",            
 				"tags": [ "db", "mysql" ]
@@ -206,7 +210,7 @@ func TestLoadConfigDataWithouthStdinFilenameShoulFail(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",
+				"repositories": [ "test1" ],
 				"data_stdin_command": "mysqldump",
 				"tags": [ "db", "mysql" ]
 			}
@@ -230,7 +234,7 @@ func TestLoadConfigNothingToBackup(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",        
+				"repositories": [ "test1" ],
 				"tags": [ "db", "mysql" ]
 			}
 		]
@@ -253,7 +257,7 @@ func TestLoadConfigInvalidRepostory(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "INVALID REPOSITORY",
+				"repositories": [ "INVALID REPOSITORY" ],
 				"data_stdin_command": "mysqldump"
 			}
 		]
@@ -262,6 +266,52 @@ func TestLoadConfigInvalidRepostory(t *testing.T) {
 	_, error := LoadFromReader(reader)
 	assert.True(t, error != nil)
 	assert.True(t, strings.Contains(error.Error(), "Backup repository INVALID REPOSITORY not defined."))
+}
+
+func TestLoadConfigInvalidRepositoryName(t *testing.T) {
+	reader := strings.NewReader(`{
+		"repositories": [
+			{
+				"name": "test1/ ",
+				"url": "/home/test/repos/test1",
+				"password": "1"
+			}
+		],
+		"backups": [
+			{
+				"name": "mysql",
+				"repositories": [ "test1" ],
+				"data_stdin_command": "mysqldump"
+			}
+		]
+	}`)
+
+	_, error := LoadFromReader(reader)
+	assert.True(t, error != nil)
+	assert.True(t, strings.Contains(error.Error(), "Repository name contains invalid character."))
+}
+
+func TestLoadConfigInvalidBackupName(t *testing.T) {
+	reader := strings.NewReader(`{
+		"repositories": [
+			{
+				"name": "test1",
+				"url": "/home/test/repos/test1",
+				"password": "1"
+			}
+		],
+		"backups": [
+			{
+				"name": "mysql/ 123",
+				"repositories": [ "test1" ],
+				"data_stdin_command": "mysqldump"
+			}
+		]
+	}`)
+
+	_, error := LoadFromReader(reader)
+	assert.True(t, error != nil)
+	assert.True(t, strings.Contains(error.Error(), "Backup name contains invalid character."))
 }
 
 func TestGetRepositoryByName(t *testing.T) {
@@ -313,13 +363,13 @@ func TestGetBackupByName(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",
+				"repositories": [ "test1" ],
 				"data_stdin_command": "mysqldump",
 				"stdin_filename": "mysqldump.sql"
 			},
 			{
-				"name": "some data",
-				"repository": "test1",
+				"name": "some_data",
+				"repositories": [ "test1" ],
 				"data_stdin_command": "mysqldump",
 				"stdin_filename": "some_data.sql"
 			}
@@ -334,9 +384,9 @@ func TestGetBackupByName(t *testing.T) {
 	assert.NotZero(t, mysql)
 	assert.Equal(t, "mysql", mysql.Name)
 
-	someData := config.GetBackupByName("some data")
+	someData := config.GetBackupByName("some_data")
 	assert.NotZero(t, someData)
-	assert.Equal(t, "some data", someData.Name)
+	assert.Equal(t, "some_data", someData.Name)
 
 	assert.Zero(t, config.GetBackupByName("undefined"))
 }
@@ -354,7 +404,7 @@ func TestLoadConfigWithResticExecutable(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",
+				"repositories": [ "test1" ],
 				"data": [ "/etc/" ],
 				"tags": [ "db", "mysql" ]
 			}
@@ -382,7 +432,7 @@ func TestLoadConfigWithCustomEnvironment(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",
+				"repositories": [ "test1" ],
 				"data": [ "/etc/" ],
 				"tags": [ "db", "mysql" ],
 				"environment": {
@@ -449,7 +499,7 @@ func TestLoadConfigWithAge(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",
+				"repositories": [ "test1" ],
 				"data": [ "/etc/" ],
 				"tags": [ "db", "mysql" ],
 				"age": {
@@ -483,7 +533,7 @@ func TestLoadConfigWithAgeHandler(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",
+				"repositories": [ "test1" ],
 				"data": [ "/etc/" ],
 				"tags": [ "db", "mysql" ],
 				"age": {
@@ -524,7 +574,7 @@ func TestLoadConfigWithAgeWarnLimitAboveErrorLimitShouldFail(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",
+				"repositories": [ "test1" ],
 				"data": [ "/etc/" ],
 				"tags": [ "db", "mysql" ],
 				"age": {
@@ -590,7 +640,7 @@ func TestLoadConfigWithDefaults(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",
+				"repositories": [ "test1" ],
 				"data": [ "/etc/" ],
 				"tags": [ "db", "mysql" ]
 			}
@@ -678,7 +728,7 @@ func TestLoadConfigWithSomeDefaults(t *testing.T) {
 		"backups": [
 			{
 				"name": "mysql",
-				"repository": "test1",
+				"repositories": [ "test1" ],
 				"data": [ "/etc/" ],
 				"tags": [ "db", "mysql" ],
 				"handler": {
