@@ -121,7 +121,7 @@ func runForBackupConfigurations(
 				}
 
 			} else if len(split) == 2 {
-				// specific repository given, jsut run against this repository
+				// specific repository given, just run against this repository
 				backupName := split[0]
 				repoName := split[1]
 				backup := config.GetBackupByName(backupName)
@@ -141,6 +141,8 @@ func runForBackupConfigurations(
 					fmt.Fprintf(os.Stderr, "Repository %s is not a configured for backup %s\n", repo.Name, backup.Name)
 					os.Exit(1)
 				}
+
+				configsToRun = append(configsToRun, Configuration{backup.Name, repo.Name})
 
 			} else {
 				fmt.Fprintf(os.Stderr, "Configuration %s is invalid\n", configurationName)
