@@ -47,6 +47,7 @@ type Repository struct {
 	Password    string            `json:"password,omitempty"`
 	Environment map[string]string `json:"environment,omitempty"`
 	Check       Check             `json:"check,omitempty"`
+	CustomFlags []string          `json:"custom_flags,omitempty"`
 	repositoryDefaultable
 }
 

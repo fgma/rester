@@ -34,7 +34,7 @@ var shellCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		c := restic.PrepareResticEnvironmentCommand(shell, repository.URL, repository.Password, repository.Environment, 0, 0)
+		c := restic.PrepareResticEnvironmentCommand(shell, repository.URL, repository.Password, repository.Environment, 0, 0, []string{})
 		c.Stdin = os.Stdin
 		c.Stdout = os.Stdout
 		c.Stderr = os.Stderr

@@ -220,6 +220,9 @@ check
         read_data_percentage
             An integer value between 0 and 100. Specifies the percentage of randomly choosen data in the repository that is checked for modifications on each run of check. If 100% is not an integer multiple of the given percentage the given percentage will be adjusted accordingly. E.g. a percentage of 50% will check half of the repository on each check while a percentage of 43% will only check 33% of the repository on each check.
 
+custom_flags
+    String array of custom flags that are not directly supported e.g. ``--ignore-inode``. All flags are directly passed to restic. Unsupported flags might break restic backups.
+
 handler
     Handlers are called at specific events during execution. They may be used to run custom scripts e.g. to notify the user about a successful check of the repository. 
 

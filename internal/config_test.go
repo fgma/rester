@@ -28,7 +28,8 @@ func TestLoadConfig(t *testing.T) {
 				},
 				"check": {
 					"read_data_percentage": 5
-				}
+				},
+				"custom_flags": [ "-o", "key=value" ]
 			}
 		],
 		"backups": [
@@ -87,6 +88,9 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, "/home/test/repos/test2", config.Repositories[1].URL)
 	assert.Equal(t, "2", config.Repositories[1].Password)
 	assert.Equal(t, uint(5), config.Repositories[1].Check.ReadDataPercentage)
+	assert.Equal(t, 2, len(config.Repositories[1].CustomFlags), "invalid custom flag")
+	assert.Equal(t, "-o", config.Repositories[1].CustomFlags[0])
+	assert.Equal(t, "key=value", config.Repositories[1].CustomFlags[1])
 	assert.Equal(t, "notify_send -t 1000 check done", config.Repositories[1].Handler.CheckSuccess)
 	assert.Equal(t, "notify_send check failed", config.Repositories[1].Handler.CheckFailure)
 	assert.Equal(t, "notify_send -t 1000 forget done", config.Repositories[1].Handler.ForgetSuccess)

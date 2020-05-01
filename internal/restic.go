@@ -461,13 +461,13 @@ func (r Restic) prepareResticCommand(
 	environment := combineMaps(repo.Environment, additionalEnvironment)
 	return r.PrepareResticEnvironmentCommand(
 		r.resticExecutable, repo.URL, repo.Password, environment,
-		repo.LimitDownload, repo.LimitUpload,
+		repo.LimitDownload, repo.LimitUpload, repo.CustomFlags,
 	)
 }
 
 func (r Restic) PrepareResticEnvironmentCommand(
 	command string, repoURL string, password string, environment map[string]string,
-	limitDownload int, limitUpload int,
+	limitDownload int, limitUpload int, customFlags []string,
 ) *exec.Cmd {
 	cmd := exec.Command(command)
 
@@ -476,6 +476,10 @@ func (r Restic) PrepareResticEnvironmentCommand(
 	}
 	if limitUpload > 0 {
 		cmd.Args = append(cmd.Args, "--limit-upload", strconv.Itoa(limitUpload))
+	}
+
+	for _, flag := range customFlags {
+		cmd.Args = append(cmd.Args, flag)
 	}
 
 	cmd.Env = append(
