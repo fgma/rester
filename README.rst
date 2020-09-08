@@ -285,15 +285,15 @@ custom_flags
 handler
     before
         Run before ``backup`` command.
-	after
+    after
         Run after ``backup`` command independend of the result.
-	success
+    success
         Run on success of ``backup`` command.
-	failure
+    failure
         Run on failure of ``backup`` command.
-	age_warn
+    age_warn
         Run if ``age-check`` command detects a backup age above the warn limit.
-	age_error
+    age_error
         Run if ``age-check`` command detects a backup age above the error limit.
 
     For more details on handler usage have a look at the repository handler documentation.
